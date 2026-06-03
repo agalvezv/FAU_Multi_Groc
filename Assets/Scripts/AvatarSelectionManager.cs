@@ -1,4 +1,3 @@
-//Script to select either Avatar A or Avatar B by sending messages to the avatar's game object
 using UnityEngine;
 
 public class AvatarSelectionManager : MonoBehaviour
@@ -30,14 +29,29 @@ public class AvatarSelectionManager : MonoBehaviour
 
         Debug.Log($"[AvatarSelection] Triggering asset load for: {assetName}");
 
-        // Using Unity's native messaging pipeline completely to bypass version-locked API methods.
-        // Dynamically searches the avatar object for Meta's built-in loading functions
-        localAvatarObject.SendMessage("Teardown", SendMessageOptions.DontRequireReceiver);
-        localAvatarObject.SendMessage("SetBodyAssetOverride", assetName, SendMessageOptions.DontRequireReceiver);
-        localAvatarObject.SendMessage("ReloadAvatarWithPreset", SendMessageOptions.DontRequireReceiver);
-        localAvatarObject.SendMessage("ReloadAvatar", SendMessageOptions.DontRequireReceiver);
+        // 1. Universal String Lookup: Finds the entity child without needing any Meta namespaces
+        Transform targetTransform = localAvatarObject.transform;
+        GameObject actualTarget = localAvatarObject;
 
-        // Hide the selection menu after making a selection
+        // Loop through all child objects to look for the script containing "AvatarEntity"
+        Component[] allComponents = localAvatarObject.GetComponentsInChildren<Component>(true);
+        foreach (Component comp in allComponents)
+        {
+            if (comp != null && comp.GetType().Name.Contains("AvatarEntity"))
+            {
+                actualTarget = comp.gameObject;
+                Debug.Log($"[AvatarSelection] Successfully targeted local asset entity child: {actualTarget.name}");
+                break;
+            }
+        }
+
+        // 2. Fire the native message pipeline down to the target entity
+        actualTarget.SendMessage("Teardown", SendMessageOptions.DontRequireReceiver);
+        actualTarget.SendMessage("SetBodyAssetOverride", assetName, SendMessageOptions.DontRequireReceiver);
+        actualTarget.SendMessage("ReloadAvatarWithPreset", SendMessageOptions.DontRequireReceiver);
+        actualTarget.SendMessage("ReloadAvatar", SendMessageOptions.DontRequireReceiver);
+
+        // 3. Hide the selection menu after making a selection
         if (selectionCanvas != null)
         {
             selectionCanvas.SetActive(false);
