@@ -1,12 +1,8 @@
 fileFormatVersion: 2
 guid: 21e9042a56403e741850e680123f110a
 labels:
+- FusionPrefab
 - Product
-PrefabImporter:
-  externalObjects: {}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
   productId: 186122
@@ -14,3 +10,8 @@ AssetOrigin:
   packageVersion: 1.1
   assetPath: Assets/ModernSupermarket/Prefabs/Props/Products/Sugar_o0f6pn_Var02.prefab
   uploadId: 419452
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
