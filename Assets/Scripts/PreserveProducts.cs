@@ -1,5 +1,6 @@
 using UnityEngine;
 using Fusion;
+using System.Collections.Generic;
 
 public class PreserveProducts : MonoBehaviour
 {
@@ -35,6 +36,8 @@ public class PreserveProducts : MonoBehaviour
             if (_runner.IsRunning)
             {
                 _lastRoomName = _runner.SessionInfo.Name;
+                // CRITICAL: Relinquish authority over all scene items so the server doesn't delete them when our headset disconnects!
+                ReleaseAllStateAuthority();
             }
             Debug.Log("Quest 3 entering proximity sleep mode.");
         }
@@ -43,6 +46,7 @@ public class PreserveProducts : MonoBehaviour
             // Headset just woke back up! Check if the cloud dropped us
             Debug.Log("Quest 3 woke up from proximity standby.");
             
+            // If we timed out and disconnected entirely, run our recovery block
             if (!_runner.IsRunning && !string.IsNullOrEmpty(_lastRoomName))
             {
                 Debug.Log("Network connection lost during standby. Initiating automatic hot-reconnect...");
@@ -51,6 +55,20 @@ public class PreserveProducts : MonoBehaviour
         }
     }
 
+    private void ReleaseAllStateAuthority()
+    {
+        // Gather every active network object currently tracked by our runner
+        foreach (var netObject in _runner.SimulationUnitySceneManager.AllObjects)
+        {
+            // If our local player instance currently has ownership/authority over this grabbable item
+            if (netObject.HasStateAuthority)
+            {
+                // Remove our ownership tracking. This shifts the object's authority to a neutral global server status, protecting it from deletion!
+                netObject.ReleaseStateAuthority();
+            }
+        }
+        Debug.Log("Successfully transferred state authority of all items back to the room session.");
+    }
     private async void ForceNetworkRecovery()
     {
         // Bootstraps a fresh connection to the exact same room room state 
@@ -63,12 +81,8 @@ public class PreserveProducts : MonoBehaviour
         });
 
         if (result.Ok)
-        {
             Debug.Log("Successfully recovered network session! Products restored.");
-        }
         else
-        {
             Debug.LogError($"Network recovery failed: {result.ShutdownReason}");
-        }
     }
 }
