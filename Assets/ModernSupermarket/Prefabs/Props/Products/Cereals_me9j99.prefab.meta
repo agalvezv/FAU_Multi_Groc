@@ -1,12 +1,8 @@
 fileFormatVersion: 2
 guid: 727381a80c9ddc14e844acb429a552e2
 labels:
+- FusionPrefab
 - Product
-PrefabImporter:
-  externalObjects: {}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
   productId: 186122
@@ -14,3 +10,8 @@ AssetOrigin:
   packageVersion: 1.1
   assetPath: Assets/ModernSupermarket/Prefabs/Props/Products/Cereals_me9j99.prefab
   uploadId: 419452
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

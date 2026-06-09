@@ -1,12 +1,8 @@
 fileFormatVersion: 2
 guid: 4ec80c4d940d238429262acceb089a72
 labels:
+- FusionPrefab
 - Product
-PrefabImporter:
-  externalObjects: {}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
   productId: 186122
@@ -14,3 +10,8 @@ AssetOrigin:
   packageVersion: 1.1
   assetPath: Assets/ModernSupermarket/Prefabs/Props/Products/Cake_p6lebj.prefab
   uploadId: 419452
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
