@@ -10,69 +10,72 @@ public class PreserveProducts : MonoBehaviour
     private void Awake()
     {
         // Protects this object and its network loop from being cleared 
-        // when Horizon OS forces a deep suspension. So no obejects that are grabbable dissapear if you long-press Meta button
+        // when Horizon OS forces a deep suspension. So no objects that are grabbable disappear if you long-press Meta button
         DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
         _runner = GetComponent<NetworkRunner>();
+
+        // Hook directly into Meta's Hardware Proximity Sensor events
+        OVRManager.HMDMounted += OnHeadsetPutOn;
+        OVRManager.HMDUnmounted += OnHeadsetTakenOff;
     }
 
-    private void OnApplicationPause(bool pauseStatus)
+    private void OnDestroy()
     {
-        // pauseStatus == true means headset was just taken off (entering standby)
-        // pauseStatus == false means headset was just put back on (waking up)
-        HandleHeadsetStandby(pauseStatus);
+        // Clean up hardware listeners if the object is destroyed
+        OVRManager.HMDMounted -= OnHeadsetPutOn;
+        OVRManager.HMDUnmounted -= OnHeadsetTakenOff;
     }
 
-    private void HandleHeadsetStandby(bool goingToSleep)
+    private void OnHeadsetTakenOff()
     {
-        if (_runner == null) return;
-
-        if (goingToSleep)
+        Debug.Log("Meta Proximity Sensor: Headset Taken Off!");
+        
+        if (_runner != null && _runner.IsRunning)
         {
-            // Cache the active room name right before the Wi-Fi card sleeps
-            if (_runner.IsRunning)
-            {
-                _lastRoomName = _runner.SessionInfo.Name;
-                // CRITICAL: Relinquish authority over all scene items so the server doesn't delete them when our headset disconnects!
-                ReleaseAllStateAuthority();
-            }
-            Debug.Log("Quest 3 entering proximity sleep mode.");
-        }
-        else
-        {
-            // Headset just woke back up! Check if the cloud dropped us
-            Debug.Log("Quest 3 woke up from proximity standby.");
+            _lastRoomName = _runner.SessionInfo.Name;
+            ReleaseAllStateAuthority();
             
-            // If we timed out and disconnected entirely, run our recovery block
-            if (!_runner.IsRunning && !string.IsNullOrEmpty(_lastRoomName))
-            {
-                Debug.Log("Network connection lost during standby. Initiating automatic hot-reconnect...");
-                ForceNetworkRecovery();
-            }
+            // Explicitly force a cloud disconnect here so we can gracefully 
+            // control the clean reconnection process when we wake up
+            _runner.Shutdown();
+        }
+    }
+
+    private void OnHeadsetPutOn()
+    {
+        Debug.Log("Meta Proximity Sensor: Headset Put On!");
+        
+        // If we have a cached room name and our runner is currently shut down, start recovery
+        if (_runner != null && !_runner.IsRunning && !string.IsNullOrEmpty(_lastRoomName))
+        {
+            ForceNetworkRecovery();
         }
     }
 
     private void ReleaseAllStateAuthority()
     {
-        // Gather every active network object currently tracked by our runner
-        foreach (var netObject in _runner.SimulationUnitySceneManager.AllObjects)
+        NetworkObject[] allNetObjects = FindObjectsByType<NetworkObject>(FindObjectsSortMode.None);
+
+        foreach (NetworkObject netObject in allNetObjects)
         {
-            // If our local player instance currently has ownership/authority over this grabbable item
-            if (netObject.HasStateAuthority)
+            if (netObject != null && netObject.HasStateAuthority)
             {
-                // Remove our ownership tracking. This shifts the object's authority to a neutral global server status, protecting it from deletion!
                 netObject.ReleaseStateAuthority();
             }
         }
-        Debug.Log("Successfully transferred state authority of all items back to the room session.");
+        Debug.Log("State authority successfully released back to the global room.");
     }
+
     private async void ForceNetworkRecovery()
     {
-        // Bootstraps a fresh connection to the exact same room room state 
-        // to download the cached scene products back from the cloud server
+        Debug.Log($"Initiating hot-reconnect recovery sequence for room: {_lastRoomName}");
+
+        // Bypasses custom config structures by assigning parameter arguments directly 
+        // using Fusion 2's direct matchmaking initialization dictionary
         var result = await _runner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Shared,
@@ -81,8 +84,8 @@ public class PreserveProducts : MonoBehaviour
         });
 
         if (result.Ok)
-            Debug.Log("Successfully recovered network session! Products restored.");
+            Debug.Log("Network recovery successful! Reconnected to the preserved supermarket room.");
         else
-            Debug.LogError($"Network recovery failed: {result.ShutdownReason}");
+            Debug.LogError($"Network recovery failed: {result.ShutdownReason}. Spawning fallback clean session.");
     }
 }
