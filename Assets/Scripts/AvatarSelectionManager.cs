@@ -2,60 +2,46 @@ using UnityEngine;
 
 public class AvatarSelectionManager : MonoBehaviour
 {
-    [Header("Meta Avatar Root GameObject")]
-    [Tooltip("Drag the game object from your Hierarchy that has your Avatar scripts on it")]
-    [SerializeField] private GameObject localAvatarObject;
-
     [Header("UI Reference")]
     [SerializeField] private GameObject selectionCanvas;
 
+    // This will be automatically filled when the local player spawns
+    private NetworkedAvatarSelector localPlayerSelector;
+
+    // 1. The Local Player calls this immediately upon spawning
+    public void RegisterLocalPlayer(NetworkedAvatarSelector selector)
+    {
+        localPlayerSelector = selector;
+        Debug.Log("[AvatarUI] Local player registered successfully!");
+    }
+
+    // 2. These go on UI Button OnClick() events in inspector
     public void SelectAvatarA()
     {
-        SendMetaPresetSignal("0_quest_light");
+        SendSelectionToNetwork(0); // Index 0 for Avatar A
     }
 
     public void SelectAvatarB()
     {
-        SendMetaPresetSignal("1_quest_light");
+        SendSelectionToNetwork(1); // Index 1 for Avatar B
     }
 
-    private void SendMetaPresetSignal(string assetName)
+    private void SendSelectionToNetwork(int avatarIndex)
     {
-        if (localAvatarObject == null)
+        if (localPlayerSelector == null)
         {
-            Debug.LogError("[AvatarSelection] Local Avatar Object reference is missing!");
+            Debug.LogError("[AvatarUI] No local player registered yet! Cannot change avatar.");
             return;
         }
 
-        Debug.Log($"[AvatarSelection] Triggering asset load for: {assetName}");
+        // Tell our networked object to change its synchronized state
+        localPlayerSelector.SetAvatarSelection(avatarIndex);
 
-        // 1. Universal String Lookup: Finds the entity child without needing any Meta namespaces
-        Transform targetTransform = localAvatarObject.transform;
-        GameObject actualTarget = localAvatarObject;
-
-        // Loop through all child objects to look for the script containing "AvatarEntity"
-        Component[] allComponents = localAvatarObject.GetComponentsInChildren<Component>(true);
-        foreach (Component comp in allComponents)
-        {
-            if (comp != null && comp.GetType().Name.Contains("AvatarEntity"))
-            {
-                actualTarget = comp.gameObject;
-                Debug.Log($"[AvatarSelection] Successfully targeted local asset entity child: {actualTarget.name}");
-                break;
-            }
-        }
-
-        // 2. Fire the native message pipeline down to the target entity
-        actualTarget.SendMessage("Teardown", SendMessageOptions.DontRequireReceiver);
-        actualTarget.SendMessage("SetBodyAssetOverride", assetName, SendMessageOptions.DontRequireReceiver);
-        actualTarget.SendMessage("ReloadAvatarWithPreset", SendMessageOptions.DontRequireReceiver);
-        actualTarget.SendMessage("ReloadAvatar", SendMessageOptions.DontRequireReceiver);
-
-        // 3. Hide the selection menu after making a selection
+        // Hide the selection menu
         if (selectionCanvas != null)
         {
             selectionCanvas.SetActive(false);
-            Debug.Log("[AvatarSelection] Setup complete! Closing UI selection frame.");
+            Debug.Log($"[AvatarUI] Selection {avatarIndex} sent. Closing UI frame.");
         }
     }
 }

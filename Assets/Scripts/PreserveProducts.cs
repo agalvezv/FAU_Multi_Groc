@@ -9,8 +9,7 @@ public class PreserveProducts : MonoBehaviour
 
     private void Awake()
     {
-        // Protects this object and its network loop from being cleared 
-        // when Horizon OS forces a deep suspension. So no objects that are grabbable disappear if you long-press Meta button
+        // Protects this object and its network loop from being cleared when Horizon OS forces a deep suspension. So no objects that are grabbable disappear if you long-press Meta button
         DontDestroyOnLoad(gameObject);
     }
 
@@ -32,24 +31,22 @@ public class PreserveProducts : MonoBehaviour
 
     private void OnHeadsetTakenOff()
     {
-        Debug.Log("Meta Proximity Sensor: Headset Taken Off!");
+        Debug.Log("Meta Proximity Sensor: Headset Taken Off! Connection is kept alive in background.");
         
-        if (_runner != null && _runner.IsRunning)
+        // Save the room name just in case the OS drops the socket on an extended idle pause
+        if (_runner != null && _runner.IsRunning && _runner.SessionInfo.IsValid)
         {
             _lastRoomName = _runner.SessionInfo.Name;
-            ReleaseAllStateAuthority();
-            
-            // Explicitly force a cloud disconnect here so we can gracefully 
-            // control the clean reconnection process when we wake up
-            _runner.Shutdown();
         }
+
+        // ReleaseAllStateAuthority() and _runner.Shutdown() are stripped out to prevent immediate network dropouts when checking your computer monitor
     }
 
     private void OnHeadsetPutOn()
     {
         Debug.Log("Meta Proximity Sensor: Headset Put On!");
         
-        // If we have a cached room name and our runner is currently shut down, start recovery
+        // If the headset was off for so long that the network socket NATURALLY timed out, then and only then we execute recovery to hot-reconnect back to the room
         if (_runner != null && !_runner.IsRunning && !string.IsNullOrEmpty(_lastRoomName))
         {
             ForceNetworkRecovery();
@@ -74,8 +71,6 @@ public class PreserveProducts : MonoBehaviour
     {
         Debug.Log($"Initiating hot-reconnect recovery sequence for room: {_lastRoomName}");
 
-        // Bypasses custom config structures by assigning parameter arguments directly 
-        // using Fusion 2's direct matchmaking initialization dictionary
         var result = await _runner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Shared,

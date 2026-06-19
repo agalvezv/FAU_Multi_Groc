@@ -80094,6 +80094,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1125441688}
   - component: {fileID: 1125441686}
+  - component: {fileID: 1125441689}
+  - component: {fileID: 1125441690}
   m_Layer: 0
   m_Name: Networked Avatar
   m_TagString: Untagged
@@ -80136,6 +80138,39 @@ Transform:
   - {fileID: 2030502430}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 270, z: 0}
+--- !u!114 &1125441689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125441685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7de3a9e71d9bfeb4f803f612bbd5b9d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkedAvatarSelector
+  _ChosenAvatarIndex: -1
+  avatarEntity: {fileID: 0}
+--- !u!114 &1125441690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125441685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
+  SortKey: 2544735299
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 1125441689}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1001 &1125657010
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -133935,7 +133970,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1061561715f0e41afd850744e7d39a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AvatarSelectionManager
-  localAvatarObject: {fileID: 1125441685}
   selectionCanvas: {fileID: 1838713088}
 --- !u!114 &1838713095
 MonoBehaviour:
