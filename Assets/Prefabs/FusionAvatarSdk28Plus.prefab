@@ -155,7 +155,7 @@ MonoBehaviour:
   MotionSmoothingSettings: 0
   _hidden: 0
   useRenderLods: 1
-  _isLocal: 1
+  _isLocal: 0
   m_facePoseProvider: {fileID: 0}
   m_eyePoseProvider: {fileID: 0}
 --- !u!114 &494040403974668553
