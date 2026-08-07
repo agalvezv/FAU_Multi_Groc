@@ -111,7 +111,7 @@ MonoBehaviour:
       reserved: 0000000000000000000000000000000000000000000000000000000000000000
       subMeshVertexPreference: 0
   _validateCache: 1
-  _activeView: 1
+  _activeView: 2
   _activeManifestation: 1
   _activeSubMeshes: -1
   _activeSubMeshesIncludeUntyped: 1
