@@ -126,7 +126,12 @@ public class PhotonNetworkLogger : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        LogToScreen($"[FUSION] Player Left! ID: {player.PlayerId}");
+        int totalPlayers = runner.ActivePlayers.Count();
+        
+        var avatars = FindObjectsByType<Meta.XR.MultiplayerBlocks.Fusion.AvatarBehaviourFusion>(FindObjectsSortMode.None);
+        int avatarCount = avatars.Length;
+
+        LogToScreen($"[FUSION] Player Left! ID: {player.PlayerId} | Room Players: {totalPlayers} | Active Avatars: {avatarCount}");
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)

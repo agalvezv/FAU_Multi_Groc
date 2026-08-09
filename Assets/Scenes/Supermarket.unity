@@ -81706,8 +81706,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1125441688}
   - component: {fileID: 1125441686}
-  - component: {fileID: 1125441689}
-  - component: {fileID: 1125441690}
   m_Layer: 0
   m_Name: Networked Avatar
   m_TagString: Untagged
@@ -81750,39 +81748,6 @@ Transform:
   - {fileID: 2030502430}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 270, z: 0}
---- !u!114 &1125441689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125441685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7de3a9e71d9bfeb4f803f612bbd5b9d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NetworkedAvatarSelector
-  _ChosenAvatarIndex: 0
-  avatarEntity: {fileID: 0}
---- !u!114 &1125441690
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125441685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 2544735299
-  ObjectInterest: 1
-  Flags: 786433
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 1125441689}
-  ForceRemoteRenderTimeframe: 0
 --- !u!1001 &1125657010
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -152294,9 +152259,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1eea11467ac17a4482df94a000f45c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioSource: {fileID: 2030502433}
+  _audioSource: {fileID: 0}
   _micInputVolume: 1
-  _micInputMode: 2
+  _micInputMode: 3
   _inputButtonName: 
   _stopRecordingWhilePaused: 1
   _stopRecordingWhileUnfocused: 1
@@ -152331,7 +152296,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -152659,10 +152624,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2035539093}
-  - component: {fileID: 2035539092}
   - component: {fileID: 2035539091}
   m_Layer: 0
-  m_Name: '[BuildingBlock] Player Voice Chat'
+  m_Name: Player Voice Chat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152681,26 +152645,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   centerEyeAnchor: {fileID: 484077946}
---- !u!114 &2035539092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2035539090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b023183069df224080314a560e6e1ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Meta.XR.BuildingBlocks::Meta.XR.BuildingBlocks.BuildingBlock
-  blockId: 5523ee0f-69d0-4e9f-b4b3-1ca61874f631
-  instanceId: 977346d4-6dbc-4c5c-944b-ec46ba85a717
-  version: 1
-  installationRoutineCheckpoint:
-    _installationRoutineId: ca29a203-ad6d-4c65-ae37-ffab1dc8a165
-    _installationVariants:
-    - _memberName: installMatchmaking
-      _value: '{"value__":0}'
 --- !u!4 &2035539093
 Transform:
   m_ObjectHideFlags: 0
